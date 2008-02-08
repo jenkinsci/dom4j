@@ -1,0 +1,9 @@
+velocity.log*
+build
+target
+dist
+junit*.properties
+*.log
+.classpath
+.project
+bin
