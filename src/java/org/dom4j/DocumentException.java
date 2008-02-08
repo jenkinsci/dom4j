@@ -45,6 +45,11 @@ public class DocumentException extends Exception {
         return nestedException;
     }
 
+    // on JDK 1.4 and above this helps exception chaining
+    public Throwable getCause() {
+        return nestedException;
+    }
+
     public String getMessage() {
         if (nestedException != null) {
             return super.getMessage() + " Nested exception: "
