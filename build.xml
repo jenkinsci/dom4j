@@ -183,6 +183,8 @@
     <jar jarfile="${build.dir}/${name}.jar"
          basedir="${build.dest}"
          includes="org/dom4j/**"/>
+    <jar jarfile="${build.dir}/${name}-sources.jar"
+         basedir="${build.src}" />
   </target>
 
   <!-- =================================================================== -->
