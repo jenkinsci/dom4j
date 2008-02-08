@@ -146,6 +146,8 @@
            source="1.3"
            deprecation="${deprecation}"
            classpathref="compile.classpath">
+      <exclude name="**/jaxb/*" />
+      <exclude name="**/dom/*" />
     </javac>
   </target>
 
