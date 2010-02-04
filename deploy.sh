@@ -1,7 +1,7 @@
 # run it like ". ./deploy.sh"
 
 ant clean all
-v=1.6.1-hudson-1
+v=1.6.1-hudson-2
 
 sed -e "s/@VERSION@/$v/g" < pom.xml > build/pom.xml
 
