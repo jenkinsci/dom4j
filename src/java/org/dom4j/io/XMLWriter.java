@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.StringTokenizer;
 
 import org.dom4j.Attribute;
@@ -122,6 +123,9 @@ public class XMLWriter extends XMLFilterImpl implements LexicalHandler {
     private boolean charsAdded = false;
 
     private char lastChar;
+
+    /** Whether any content was written in each tag */
+    private Stack/*<Boolean>*/ hadContent = new Stack/*<Boolean>*/();
 
     /** Whether a flush should occur after writing a document */
     private boolean autoFlush;
@@ -641,6 +645,7 @@ public class XMLWriter extends XMLFilterImpl implements LexicalHandler {
 
     public void startDocument() throws SAXException {
         try {
+            hadContent.clear();
             writeDeclaration();
             super.startDocument();
         } catch (IOException e) {
@@ -677,15 +682,20 @@ public class XMLWriter extends XMLFilterImpl implements LexicalHandler {
             String qName, Attributes attributes) throws SAXException {
         try {
             charsAdded = false;
+            if (!hadContent.isEmpty() && !((Boolean)hadContent.peek()).booleanValue()) {
+                writer.write('>');
+                hadContent.pop();
+                hadContent.push(Boolean.TRUE);
+            }
 
             writePrintln();
             indent();
-            writer.write("<");
+            writer.write('<');
             writer.write(qName);
             writeNamespaces();
             writeAttributes(attributes);
-            writer.write(">");
             ++indentLevel;
+            hadContent.push(Boolean.FALSE);
             lastOutputNodeType = Node.ELEMENT_NODE;
             lastElementClosed = false;
 
@@ -706,11 +716,10 @@ public class XMLWriter extends XMLFilterImpl implements LexicalHandler {
                 indent();
             }
 
-            // XXXX: need to determine this using a stack and checking for
-            // content / children
-            boolean hadContent = true;
-
-            if (hadContent) {
+            if (hadContent.isEmpty()) {
+                throw new SAXException("Empty stack; endElement without matching startElement?");
+            }
+            if (((Boolean)hadContent.pop()).booleanValue()) {
                 writeClose(qName);
             } else {
                 writeEmptyElementClose(qName);
@@ -732,6 +741,12 @@ public class XMLWriter extends XMLFilterImpl implements LexicalHandler {
         }
 
         try {
+            if (!hadContent.isEmpty() && !((Boolean)hadContent.peek()).booleanValue()) {
+                writer.write('>');
+                hadContent.pop();
+                hadContent.push(Boolean.TRUE);
+            }
+
             /*
              * we can't use the writeString method here because it's possible we
              * don't receive all characters at once and calling writeString

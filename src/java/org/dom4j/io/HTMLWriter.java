@@ -218,6 +218,8 @@ public class HTMLWriter extends XMLWriter {
      */
     private HashSet omitElementCloseSet;
 
+    private boolean disabled = false;
+
     public HTMLWriter(Writer writer) {
         super(writer, DEFAULT_HTML_FORMAT);
     }
@@ -243,10 +245,24 @@ public class HTMLWriter extends XMLWriter {
         super(out, format);
     }
 
+    public boolean isEnabled() {
+        return !disabled;
+    }
+
+    /**
+     * Enable/disable HTML handling.  If set to false, behave as plain XMLWriter
+     * (useful if Content-Type is set to something other than text/html).
+     */
+    public void setEnabled(boolean enabled) {
+        disabled = !enabled;
+    }
+
     public void startCDATA() throws SAXException {
+        if (disabled) super.startCDATA();
     }
 
     public void endCDATA() throws SAXException {
+        if (disabled) super.startCDATA();
     }
 
     // Overloaded methods
@@ -254,7 +270,7 @@ public class HTMLWriter extends XMLWriter {
     protected void writeCDATA(String text) throws IOException {
         // XXX: Should we escape entities?
         // writer.write( escapeElementEntities( text ) );
-        if (getOutputFormat().isXHTML()) {
+        if (disabled || getOutputFormat().isXHTML()) {
             super.writeCDATA(text);
         } else {
             writer.write(text);
@@ -264,14 +280,18 @@ public class HTMLWriter extends XMLWriter {
     }
 
     protected void writeEntity(Entity entity) throws IOException {
+      if (disabled) super.writeEntity(entity); else {
         writer.write(entity.getText());
         lastOutputNodeType = Node.ENTITY_REFERENCE_NODE;
+      }
     }
 
     protected void writeDeclaration() throws IOException {
+        if (disabled) super.writeDeclaration();
     }
 
     protected void writeString(String text) throws IOException {
+      if (disabled) super.writeString(text); else {
         /*
          * DOM stores \n at the end of text nodes that are newlines. This is
          * significant if we are in a PRE section. However, we only want to
@@ -299,6 +319,7 @@ public class HTMLWriter extends XMLWriter {
         } else {
             super.writeString(text);
         }
+      }
     }
 
     /**
@@ -312,16 +333,17 @@ public class HTMLWriter extends XMLWriter {
      *             DOCUMENT ME!
      */
     protected void writeClose(String qualifiedName) throws IOException {
-        if (!omitElementClose(qualifiedName)) {
+        if (disabled || !omitElementClose(qualifiedName)) {
             super.writeClose(qualifiedName);
         }
     }
 
     protected void writeEmptyElementClose(String qualifiedName)
             throws IOException {
-        if (getOutputFormat().isXHTML()) {
-            // xhtml, always check with format object whether to expand or not.
-            if (omitElementClose(qualifiedName)) {
+        if (disabled || !omitElementClose(qualifiedName)) {
+            super.writeEmptyElementClose(qualifiedName);
+        } else {
+            if (getOutputFormat().isXHTML()) {
                 // it was a special omit tag, do it the XHTML way: "<br/>",
                 // ignoring the expansion option, since <br></br> is OK XML,
                 // but produces twice the linefeeds desired in the browser.
@@ -329,17 +351,8 @@ public class HTMLWriter extends XMLWriter {
                 // before the close slash.
                 writer.write(" />");
             } else {
-                super.writeEmptyElementClose(qualifiedName);
-            }
-        } else {
-            // html, not xhtml
-            if (omitElementClose(qualifiedName)) {
                 // it was a special omit tag, do it the old html way: "<br>".
                 writer.write(">");
-            } else {
-                // it was NOT a special omit tag, check with format object
-                // whether to expand or not.
-                super.writeEmptyElementClose(qualifiedName);
             }
         }
     }
@@ -369,7 +382,6 @@ public class HTMLWriter extends XMLWriter {
         set.add("INPUT");
         set.add("LINK");
         set.add("META");
-        set.add("P");
         set.add("PARAM");
     }
 
@@ -378,7 +390,7 @@ public class HTMLWriter extends XMLWriter {
     /**
      * A clone of the Set of elements that can have their close-tags omitted. By
      * default it should be "AREA", "BASE", "BR", "COL", "HR", "IMG", "INPUT",
-     * "LINK", "META", "P", "PARAM"
+     * "LINK", "META", "PARAM"
      * 
      * @return A clone of the Set.
      */
@@ -764,7 +776,7 @@ public class HTMLWriter extends XMLWriter {
 
     // Allows us to the current state of the format in this struct on the
     // formatStack.
-    private class FormatState {
+    private static class FormatState {
         private boolean newlines = false;
 
         private boolean trimText = false;
