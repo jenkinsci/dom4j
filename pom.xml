@@ -3,7 +3,7 @@
   <groupId>org.jvnet.hudson.dom4j</groupId>
   <artifactId>dom4j</artifactId>
   <name>dom4j</name>
-  <version>1.6.1-hudson-3-SNAPSHOT</version>
+  <version>1.6.1-hudson-3</version>
   <description>dom4j: the flexible XML framework for Java</description>
   <url>http://dom4j.org</url>
   <issueManagement>
