@@ -369,7 +369,6 @@ public class HTMLWriter extends XMLWriter {
         set.add("INPUT");
         set.add("LINK");
         set.add("META");
-        set.add("P");
         set.add("PARAM");
     }
 
@@ -378,7 +377,7 @@ public class HTMLWriter extends XMLWriter {
     /**
      * A clone of the Set of elements that can have their close-tags omitted. By
      * default it should be "AREA", "BASE", "BR", "COL", "HR", "IMG", "INPUT",
-     * "LINK", "META", "P", "PARAM"
+     * "LINK", "META", "PARAM"
      * 
      * @return A clone of the Set.
      */
