@@ -161,6 +161,8 @@
            optimize="${optimize}"
            deprecation="${deprecation}"
            classpathref="test.classpath">
+      <exclude name="**/dom/*" />
+      <exclude name="**/DOMWriterTest*" />
     </javac>
   </target>
 
@@ -285,6 +287,8 @@
       <batchtest fork="yes" todir="${build.dir}/test-results/xml">
         <fileset dir="${test.dir}">
           <include name="**/*Test.java" />
+          <exclude name="**/dom/*" />
+          <exclude name="**/DOMWriterTest.java" />
           <exclude name="**/AllTests.java,**/Abstract*.java,**/TestCase.java" />
         </fileset>
       </batchtest>

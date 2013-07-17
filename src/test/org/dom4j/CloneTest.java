@@ -11,8 +11,8 @@ import junit.textui.TestRunner;
 
 import java.util.Comparator;
 
-import org.dom4j.dom.DOMDocument;
-import org.dom4j.dom.DOMDocumentFactory;
+//import org.dom4j.dom.DOMDocument;
+//import org.dom4j.dom.DOMDocumentFactory;
 import org.dom4j.util.NodeComparator;
 
 /**
@@ -30,6 +30,7 @@ public class CloneTest extends AbstractTestCase {
 
     // Test case(s)
     // -------------------------------------------------------------------------
+    /*
     public void testBug1148333() {
         DOMDocumentFactory factory = (DOMDocumentFactory) DOMDocumentFactory
                 .getInstance();
@@ -42,6 +43,7 @@ public class CloneTest extends AbstractTestCase {
         assertNotSame(doc, clone);
         assertNodesEqual(doc, clone);
     }
+    */
 
     public void testElementWithNamespaceClone() {
         Element element = DocumentFactory.getInstance()
