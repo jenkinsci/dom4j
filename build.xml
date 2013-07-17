@@ -159,6 +159,7 @@
            destdir="${build.dest}"
            debug="${debug}"
            optimize="${optimize}"
+           encoding="ISO-8859-1"
            deprecation="${deprecation}"
            classpathref="test.classpath">
       <exclude name="**/dom/*" />
