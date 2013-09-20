@@ -100,7 +100,7 @@ public class DocumentFactory implements Serializable {
         }
         catch(ClassCastException ex)
         {
-        	System.out.println("WARNING: Unable to cast to org.dom4j.DocumentFactory. Using default DocumentFactory.");
+        	System.out.println("[WARNING] Using default org.dom4j.DocumentFactory");
         	return new DocumentFactory();
         }
     }
