@@ -91,10 +91,18 @@ public class DocumentFactory implements Serializable {
      * @return the default singleon instance
      */
     public static synchronized DocumentFactory getInstance() {
-        if (singleton == null) {
-            singleton = createSingleton();
+        try
+        {
+            if (singleton == null) {
+                singleton = createSingleton();
+            }
+            return (DocumentFactory) singleton.instance();
         }
-        return (DocumentFactory) singleton.instance();
+        catch(ClassCastException ex)
+        {
+        	System.out.println("WARNING: Unable to cast to org.dom4j.DocumentFactory. Using default DocumentFactory.");
+        	return new DocumentFactory();
+        }
     }
 
     // Factory methods
